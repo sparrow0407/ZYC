@@ -1,0 +1,455 @@
+{
+	"info": {
+		"_postman_id": "e0e287fd-3499-41f5-ad66-35349c1da75c",
+		"name": "中意财",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "投保",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "5fc3f1fd-c210-4293-85d7-a5ab0e6cee92",
+						"exec": [
+							"// 处理保险期限\r",
+							"\r",
+							"pm.collectionVariables.set(\"insurancedate\", 1);\r",
+							"var days = pm.variables.replaceIn('{{insurancedate}}') - 1;\r",
+							"console.log(days);\r",
+							"\r",
+							"//处理当前时间\r",
+							"var myDate=new Date();\r",
+							"var date = myDate.getDate();\r",
+							"var year = myDate.getFullYear();\r",
+							"var month = myDate.getMonth() + 1;\r",
+							"var datetody = myDate.getDate();\r",
+							"var hours = myDate.getHours() ;\r",
+							"var min = myDate.getMinutes() + 20;\r",
+							"var mincurrent = myDate.getMinutes()+10;\r",
+							"var seconds = myDate.getSeconds();\r",
+							"\r",
+							"datetody = datetody < 10? \"0\"+ datetody : datetody;\r",
+							"date = date < 10? \"0\"+ date : date;\r",
+							"month = month <10 ? \"0\" + month : month;\r",
+							"hours = hours < 10 ? \"0\" + hours : hours;\r",
+							"min = min < 10 ? \"0\" + min : min;\r",
+							"mincurrent = mincurrent < 10 ? \"0\" + mincurrent : mincurrent\r",
+							"seconds = seconds < 10 ? \"0\" + seconds : seconds;\r",
+							"\r",
+							"// 处理保险止期\r",
+							"currentdate = new Date();\r",
+							"var ms = currentdate.getTime();\r",
+							"//保险止期 计算为天转化为毫秒\r",
+							"ms+=days*24*60*60*1000;\r",
+							"//得到保险止期时间\r",
+							"var expirydate = new Date(ms);\r",
+							"//得到保险止期的年月日\r",
+							"var expiryyear = expirydate.getFullYear();\r",
+							"var expiryday = expirydate.getDate();\r",
+							"var expirymonth = expirydate.getMonth() + 1;\r",
+							"\r",
+							"expiryday = expiryday < 10? \"0\"+ expiryday : expiryday;\r",
+							"expirymonth = expirymonth <10 ? \"0\" + expirymonth : expirymonth;\r",
+							"\r",
+							"//操作时间，即当前时间\r",
+							"var operateDate = year + \"-\" + month +\"-\" + datetody +\" \"+ hours +\":\" + mincurrent +\":\"+ seconds;\r",
+							"//生效时间\r",
+							"pm.collectionVariables.set(\"effectTime\", year + \"-\" + month +\"-\" + datetody +\" \"+ hours +\":\" + min +\":\"+ seconds );\r",
+							"//到期时间，默认到期时间为1天,止期为23点59分59秒\r",
+							"pm.collectionVariables.set(\"expiryTime\", expiryyear + \"-\" + expirymonth +\"-\" + expiryday +\" \"+ \"23:59:59\" );\r",
+							"// console.log(expiryTime)\r",
+							"//赋值给当前时间\r",
+							"pm.globals.set(\"now\", year + \"-\" + month +\"-\" + datetody +\" \"+ hours +\":\" + mincurrent +\":\"+ seconds );\r",
+							"//默认的请求id，随机的uuid-v4 style\r",
+							"//如 611c2e81-2ccb-42d8-9ddc-2d0bfa65c1b4\r",
+							"// pm.collectionVariables.set(\"requestId\", \"{{$guid}}\" );\r",
+							"\r",
+							"pm.collectionVariables.set(\"requestId\", \"068520\" + pm.variables.replaceIn('{{$randomInt}}') + pm.variables.replaceIn('{{$randomInt}}') + pm.variables.replaceIn('{{$randomInt}}'));\r",
+							"//产品代码  06851F\r",
+							"//户外休闲     06851F\r",
+							"pm.collectionVariables.set(\"productCode\", \"06851F\" );\r",
+							"//计划代码\r",
+							"// 计划一 644001001\r",
+							"// 计划二 644001002\r",
+							"// 计划三 644001003\r",
+							"pm.collectionVariables.set(\"proposalPlan\", \"644001001\" );\r",
+							"// now\r",
+							"// effectTime\r",
+							"// expiryTime\r",
+							"// 保费，精确到分，由数据提供，\r",
+							"// premium\r",
+							"pm.collectionVariables.set(\"premium\", \"300\" );\r",
+							"// yearFlag，整年投保标识\r",
+							"pm.collectionVariables.set(\"yearFlag\", \"0\" );\r",
+							"// 投保人名称\r",
+							"// application.name\r",
+							"pm.collectionVariables.set(\"application.name\", \"张三\" );\r",
+							"// 生日\r",
+							"// application.birthday\r",
+							"pm.collectionVariables.set(\"application.birthday\", \"1982-09-09\" );\r",
+							"// 证件类型\r",
+							"// application.idType\r",
+							"// 个人：\r",
+							"// 120001 身份证\r",
+							"// 120002 军官证\r",
+							"// 120004 台胞证\r",
+							"// 120005 护照\r",
+							"// 120006 港澳返乡证\r",
+							"// 法人：\r",
+							"// 110004 统一社会信用\r",
+							"// 证代码\r",
+							"// 110003 机构组织代码\r",
+							"pm.collectionVariables.set(\"application.idType\", \"120002\" );\r",
+							"// 证件id\r",
+							"// application.idNo\r",
+							"var idNo = \"2020082\"+pm.variables.replaceIn('{{$randomInt}}')+pm.variables.replaceIn('{{$randomInt}}')+pm.variables.replaceIn('{{$randomInt}}');\r",
+							"pm.collectionVariables.set(\"application.idNo\", idNo  );\r",
+							"//insured.name\r",
+							"// 被保险人姓名\r",
+							"pm.collectionVariables.set(\"insured.name\", \"张三\" );\r",
+							"// 被保险人生日\r",
+							"// insured.birthday\r",
+							"pm.collectionVariables.set(\"insured.birthday\", \"1982-09-09\" );\r",
+							"// insured.idType\r",
+							"// 被保险人类型\r",
+							"// 个人：\r",
+							"// 120001 身份证\r",
+							"// 120002 军官证\r",
+							"// 120004 台胞证\r",
+							"// 120005 护照\r",
+							"// 120006 港澳返乡证\r",
+							"// 120007 出生证明\r",
+							"pm.collectionVariables.set(\"insured.idType\", \"120002\" );\r",
+							"// insured.idNO\r",
+							"// 被保险人证件号码\r",
+							"pm.collectionVariables.set(\"insured.idNo\", idNo );\r",
+							"// 被保险人履行地址\r",
+							"// insured.adress\r",
+							"pm.collectionVariables.set(\"insured.adress\", \"南京\" );\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "5a905316-6da8-4ddb-ab5e-0ac0dfd1c40f",
+						"exec": [
+							"pm.test(\"投保是否成功，成功则存储返回投保单号\", function () {\r",
+							"  const responseJson = xml2Json(pm.response.text());\r",
+							"  pm.expect(responseJson.packageList.package.response.errorMessage).to.eql('成功');\r",
+							"  pm.expect(responseJson.packageList.package.header.requestId).to.eql(\"T0685TY-\" + pm.collectionVariables.get(\"requestId\"));\r",
+							"  pm.globals.set(\"orderId\",responseJson.packageList.package.header.requestId );\r",
+							"  pm.globals.set(\"proposalNo\", responseJson.packageList.package.response.policyNo);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "sign",
+							"value": "test",
+							"type": "text"
+						},
+						{
+							"key": "userName",
+							"value": "9912345678",
+							"type": "text"
+						},
+						{
+							"key": "passWord",
+							"value": "9999",
+							"type": "text"
+						},
+						{
+							"key": "templateCode",
+							"value": "T0685TY",
+							"type": "text"
+						},
+						{
+							"key": "xml",
+							"value": "<?xmlversion=\"1.0\" encoding=\"utf-8\"?>\n<packageList>\n<package>\n<header>\n<requestType>insure</requestType>\n<requestId>T0685TY-{{requestId}}</requestId>\n</header>\n<request>\n<insurePlan>\n<productCode>{{productCode}}</productCode>\n<proposalPlan>{{proposalPlan}}</proposalPlan>\n<operateTime>{{now}}</operateTime>\n<effectTime>{{effectTime}}</effectTime>\n<expiryTime>{{expiryTime}}</expiryTime>\n<sumPremium>{{premium}}</sumPremium>\n<journey>北京天安门</journey>\n<yearFlag>{{yearFlag}}</yearFlag>\n</insurePlan>\n<application>\n<name>{{application.name}}</name>\n<gender>106001</gender>\n<birthday>{{application.birthday}}</birthday>\n<idType>{{application.idType}}</idType>\n<idNo>{{application.idNo}}</idNo>\n<mobile>15077862813</mobile>\n<email>zhanghailiang@sinosoft.com.cn</email>\n<address>jiangsunanjing</address>\n</application>\n<insureds>\n<insured>\n<seqNo>1</seqNo>\n<name>{{insured.name}}</name>\n<eName>heyden</eName>\n<gender>106001</gender>\n<birthday>{{insured.birthday}}</birthday>\n<idType>{{insured.idType}}</idType>\n<idNo>{{application.idNo}}</idNo>\n<mobile>15077862813</mobile>\n<address>{{insured.adress}}</address>\n<email>zhanghailiang@sinosoft.com.cn</email>\n<benifyType>644006001</benifyType>\n<countryCode>CN</countryCode>\n<relationShip>601005</relationShip>\n</insured>\n</insureds>\n</request>\n</package>\n</packageList>\n",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://weixin.generali-china.cn/channel-app/ZYC/insure",
+					"protocol": "http",
+					"host": [
+						"weixin",
+						"generali-china",
+						"cn"
+					],
+					"path": [
+						"channel-app",
+						"ZYC",
+						"insure"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "核保",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "50c998c0-e2b4-459c-a308-c43aeebdbb83",
+						"exec": [
+							"pm.test(\"核保成功，存储保单号\", function () {\r",
+							"  const responseJson = xml2Json(pm.response.text());\r",
+							"  pm.expect(responseJson.packageList.package.response.errorMessage).to.eql('核保成功');\r",
+							"  pm.expect(responseJson.packageList.package.header.requestId).to.eql(\"T0685TY-\" + pm.collectionVariables.get(\"requestId\"));\r",
+							"  console.log(responseJson.packageList.package.response.policyNo)\r",
+							"  console.log(responseJson.packageList.package.header.requestId)\r",
+							"  console.log(pm.variables.get(\"application.idNo\"));\r",
+							"  pm.globals.set(\"policyNo\", responseJson.packageList.package.response.policyNo);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "orderId",
+							"value": "{{orderId}}",
+							"type": "text"
+						},
+						{
+							"key": "policyNo",
+							"value": "{{proposalNo}}",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://weixin.generali-china.cn/channel-app/ZYC/underwriting",
+					"protocol": "http",
+					"host": [
+						"weixin",
+						"generali-china",
+						"cn"
+					],
+					"path": [
+						"channel-app",
+						"ZYC",
+						"underwriting"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "退保",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0250f00c-6424-4fb0-8e72-b8a71c99fb23",
+						"exec": [
+							"pm.test(\"The response has all properties\", () => {\r",
+							"  pm.expect(pm.response.code).to.eql(200);\r",
+							"  const responseJson = xml2Json(pm.response.text());\r",
+							"  console.log(responseJson.packageList.package.response.errorMessage)\r",
+							"  pm.expect(responseJson.packageList.package.response.errorMessage).to.include(\"注销成功\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "sign",
+							"value": "test",
+							"type": "text"
+						},
+						{
+							"key": "userName",
+							"value": "9912345678",
+							"type": "text"
+						},
+						{
+							"key": "passWord",
+							"value": "9999",
+							"type": "text"
+						},
+						{
+							"key": "templateCode",
+							"value": "T0685TY",
+							"type": "text"
+						},
+						{
+							"key": "xml",
+							"value": "<?xmlversion=\"1.0\"encoding=\"utf-8\"?>\n<packageList>\n    <package>\n        <header>\n            <requestType>cancel</requestType>\n            <sendTime>{{now}}</sendTime>\n            <requestId>{{orderId}}</requestId>\n        </header>\n        <request>\n            <policyNo>{{policyNo}}</policyNo>\n        </request>\n    </package>\n</packageList>",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://weixin.generali-china.cn/channel-app/ZYC/cancel",
+					"protocol": "http",
+					"host": [
+						"weixin",
+						"generali-china",
+						"cn"
+					],
+					"path": [
+						"channel-app",
+						"ZYC",
+						"cancel"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "8192e30c-2076-47c7-9816-b136c187e812",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "329c34b5-d370-452c-a240-29cd1e6f84c0",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "ebc9e59d-6339-40df-b147-83cd88001d2c",
+			"key": "application.birthday",
+			"value": "1982-09-09"
+		},
+		{
+			"id": "1981820b-06f8-423f-8197-8971de0474f8",
+			"key": "application.idNo",
+			"value": "2020082845389664"
+		},
+		{
+			"id": "02b85966-abb1-4aab-af54-24e9c039750d",
+			"key": "application.idType",
+			"value": "120002"
+		},
+		{
+			"id": "b8ba9e34-23eb-4d2f-b7d1-d230e4132084",
+			"key": "application.name",
+			"value": "张三"
+		},
+		{
+			"id": "f2b710ee-3acd-413c-a755-2ec23cbdbadb",
+			"key": "effectTime",
+			"value": "2020-08-24 22:66:00"
+		},
+		{
+			"id": "ff57e980-aa84-4e37-9a9b-a6c624926cbd",
+			"key": "expiryTime",
+			"value": "2020-08-24 23:59:59"
+		},
+		{
+			"id": "4721e56d-49bc-418c-b196-0b35ff16cdc2",
+			"key": "insured.adress",
+			"value": "南京"
+		},
+		{
+			"id": "77f47cba-ca0f-4f92-9369-7ec4cf8d3aac",
+			"key": "insured.birthday",
+			"value": "1982-09-09"
+		},
+		{
+			"id": "aad74d94-7ca7-4d98-a2ab-34606fd7b9d9",
+			"key": "insured.idNo",
+			"value": "2020082845389664"
+		},
+		{
+			"id": "522bbc7b-9a6a-4f8a-a0a2-3fa41ecd7105",
+			"key": "insured.idType",
+			"value": "120002"
+		},
+		{
+			"id": "d7ecbf94-9b94-4e2a-bb37-78fbd94ace1c",
+			"key": "insured.name",
+			"value": "张三"
+		},
+		{
+			"id": "71a4789a-a2cd-4964-89f1-1bbdd0ca9046",
+			"key": "premium",
+			"value": "300"
+		},
+		{
+			"id": "0e3c9230-8bd7-4813-b4cc-bea29e46e6ae",
+			"key": "productCode",
+			"value": "06851F"
+		},
+		{
+			"id": "3c311f70-7c9e-41fb-8050-da8fd1d5f745",
+			"key": "proposalPlan",
+			"value": "644001001"
+		},
+		{
+			"id": "4a347019-5d5a-4311-86c0-d4e4ce84e30b",
+			"key": "requestId",
+			"value": "06852049772822"
+		},
+		{
+			"id": "73f6b5b7-77f0-4d3e-802a-d733f9b65ae1",
+			"key": "yearFlag",
+			"value": "0"
+		},
+		{
+			"id": "0d4b47eb-ec10-4417-a6ad-ba79783d1226",
+			"key": "insurancedate",
+			"value": 1
+		}
+	],
+	"protocolProfileBehavior": {}
+}
